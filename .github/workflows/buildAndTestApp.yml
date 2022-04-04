@@ -1,0 +1,43 @@
+on: 'pull_request'
+
+env:
+  NODE_VERSION: '14.x'
+  NODE_ENV: 'test'
+
+jobs:
+  validate-code:
+    name: 'Validate Pull Request'
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    container: node:14.17-stretch
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: 'Install dependencies'
+        run: yarn install --frozen-lockfile
+
+      - name: 'Audit dependencies'
+        run: /bin/sh -c 'yarn audit --level high; [[ $? -ge 8 ]] && exit 1 || exit 0'
+
+      - name: 'Check typings'
+        run: yarn typecheck
+
+      - name: 'Check code with Prettier'
+        run: yarn format:check
+
+      - name: 'Check code with ESLint'
+        run: yarn lint:check
+
+      - name: 'Build Application'
+        run: yarn build
+
+      - name: 'Run unit tests'
+        run: yarn test:unit
+
+      - name: 'Run e2e tests'
+        run: yarn test:e2e
