@@ -57,7 +57,7 @@
     "sort-package-json": "^1.55.0"
   },
   "devDependencies": {
-    "@nestjs/cli": "^7.6.0",
+    "@nestjs/cli": "^8.2.6",
     "@nestjs/schematics": "^7.3.0",
     "@nestjs/testing": "^7.6.15",
     "@types/express": "^4.17.11",
